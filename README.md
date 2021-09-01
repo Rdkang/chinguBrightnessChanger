@@ -1,5 +1,6 @@
 # ChinguBrightnessChanger
 a brightness and color temperature gui with **vim** keybindings
+
 ![brightnessGui Screenshot](https://user-images.githubusercontent.com/68774237/131709040-a51d3372-d8c8-4ab0-aa95-19543ed1708d.png)
 
 
