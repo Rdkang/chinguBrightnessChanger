@@ -1,9 +1,12 @@
+from typing import BinaryIO
 import pygame
-import random
-import sys
-import pathlib
-import subprocess
 import re
+import subprocess
+import pathlib
+import sys
+import random
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 
 pygame.init()
@@ -14,6 +17,7 @@ path = pathlib.Path(__file__).parent.absolute()
 WINDOW_W = 450
 WINDOW_H = 200
 FPS = 75
+COUNT = 0
 temperature = 6500
 
 white = '#d8dee9'
@@ -24,6 +28,12 @@ lightestBlue = '#4c566a'
 
 Screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
 pygame.display.set_caption('Brightness Gui')
+
+
+def counter():
+    global COUNT
+    COUNT += 1
+    return COUNT
 
 
 def message_screen(message, colour, font_size, x_pos, y_pos):
@@ -45,17 +55,18 @@ def connectedScreens():
     # pattern to match everything in apostrophes as the new line is also returned from the terminal command
     pattern = re.compile('\w+\-\d')
     screens = re.findall(pattern, str(screens.stdout.split()))
-    print(screens)
-    return screens
-
-
-display = connectedScreens()
-chosenDisplay = display[1]
+    print(counter(), screens)
+    if len(screens) > 1:
+        # reverse the list so that hdmi is first
+        screens.reverse()
+        return screens
+    else:
+        return screens[0]
 
 
 def getBrightness():
     brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
-    # print(str(brightnesss.stdout).split(' ')[1][:-3])
+    # print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
     return float(str(brightnesss.stdout).split(' ')[1][:-3])
 
 
@@ -68,7 +79,7 @@ def getTemp():
             pass
         else:
             temperature = lines[0]
-    print(temperature)
+    # print('                 ',counter(),temperature)
 
 
 def makeNextTemp(height):
@@ -76,6 +87,7 @@ def makeNextTemp(height):
     open(f"{path}/temperature.txt", 'w').close()
 
     with open(f"{path}/temperature.txt", 'r+') as file:
+        # if temperature is below 1900 will make the newTemp 6000, if true then increase the temperature and viceVersa
         if int(temperature) - 1000 <= 1900:
             newTemp = 6000
             file.write(str(newTemp))
@@ -84,7 +96,6 @@ def makeNextTemp(height):
             if height == True:
                 newTemp = int(temperature) + 1000
                 file.write(str(newTemp))
-                return newTemp
             elif height == False:
                 newTemp = int(temperature) - 1000
                 file.write(str(newTemp))
@@ -97,9 +108,12 @@ def selectRefreshRate():
     else:
         return 60
 
+
+display = connectedScreens()
+chosenDisplay = display[0]
+
+
 # where it all comes together
-
-
 def maingameloop():
     global display, chosenDisplay
     refreshRate = 60
@@ -136,19 +150,27 @@ def maingameloop():
 
                 if event.key == pygame.K_r:
                     changed = subprocess.run(f"redshift -x", shell=True, capture_output=True)
-                    newTemp = makeNextTemp(False)
+                    open(f"{path}/temperature.txt", 'w').close()
+
+                    with open(f"{path}/temperature.txt", 'r+') as file:
+                        file.write('6500')
 
                 # changes the chosen display
                 if event.key == pygame.K_d:
                     refreshRate = selectRefreshRate()
 
                     if len(display) > 1:
-                        if chosenDisplay == display[1]:
-                            chosenDisplay = display[0]
-                            pass
-                        elif chosenDisplay == display[0]:
+                        if chosenDisplay == display[0]:
                             chosenDisplay = display[1]
-                            pass
+                        elif chosenDisplay == display[1]:
+                            chosenDisplay = display[0]
+
+                        # on hold
+                        # wraps around so if two or more screens pressing d will change the screens
+                        # for i,specificDisplay in enumerate(display):
+                        #     if specificDisplay == chosenDisplay:
+                        #         chosenDisplay = display[i % len(display)]
+                        #     pass
 
         Screen.fill(darkestBlue)
         message_screen('Brightness Gui', white, 20, 0.1, 0.1)
