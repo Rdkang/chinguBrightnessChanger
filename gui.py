@@ -3,6 +3,7 @@ import re
 import subprocess
 import pathlib
 import sys
+import os
 
 
 pygame.init()
@@ -68,6 +69,13 @@ def getBrightness():
 
 def getTemp():
     global temperature
+
+    # creates 'temperature.txt' if doesn't exist
+    if not os.path.exists(f"{path}/temperature.txt"):
+        with open(f"{path}/temperature.txt", 'w'):
+            pass
+
+    # reads temperature.txt for the temperature to use if not then puts the number '6500' in the file and uses that
     with open(f"{path}/temperature.txt", 'r+') as file:
         lines = file.readlines()
         # if there are no lines in the file
