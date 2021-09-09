@@ -3,7 +3,6 @@ import re
 import subprocess
 import pathlib
 import sys
-import random
 
 
 pygame.init()
@@ -36,7 +35,7 @@ def counter():
 def message_screen(message, colour, font_size, x_pos, y_pos):
     font = pygame.font.SysFont('DejaVu Sans', font_size)
     screen_text = font.render(message, True, colour)
-    Screen.blit(screen_text, [int(WINDOW_W*x_pos), int(WINDOW_H*y_pos)])
+    Screen.blit(screen_text, [int(WINDOW_W * x_pos), int(WINDOW_H * y_pos)])
 
 
 def exiting():
@@ -76,7 +75,6 @@ def getTemp():
             pass
         else:
             temperature = lines[0]
-    # print('                 ',counter(),temperature)
 
 
 def makeNextTemp(height):
@@ -99,13 +97,6 @@ def makeNextTemp(height):
                 return newTemp
 
 
-def selectRefreshRate():
-    if chosenDisplay == 'HDMI-1':
-        return 75
-    else:
-        return 60
-
-
 display = connectedScreens()
 chosenDisplay = display[0]
 
@@ -113,7 +104,6 @@ chosenDisplay = display[0]
 # where it all comes together
 def maingameloop():
     global display, chosenDisplay
-    refreshRate = 60
 
     running = True
     while running:
@@ -121,6 +111,7 @@ def maingameloop():
 
         pyevents = pygame.event.get()
         for event in pyevents:
+            # press 'x' or 'q' to quit
             if event.type == pygame.QUIT:
                 exiting()
             if event.type == pygame.KEYDOWN:
@@ -145,6 +136,7 @@ def maingameloop():
                     newTemp = makeNextTemp(True)
                     changed = subprocess.run(f"redshift -b {brightness} -PO {newTemp}", shell=True, capture_output=True)
 
+                # resets the brightness and temperature
                 if event.key == pygame.K_r:
                     changed = subprocess.run(f"redshift -x", shell=True, capture_output=True)
                     open(f"{path}/temperature.txt", 'w').close()
@@ -152,23 +144,7 @@ def maingameloop():
                     with open(f"{path}/temperature.txt", 'r+') as file:
                         file.write('6500')
 
-                # changes the chosen display
-                if event.key == pygame.K_d:
-                    refreshRate = selectRefreshRate()
-
-                    if len(display) > 1:
-                        if chosenDisplay == display[0]:
-                            chosenDisplay = display[1]
-                        elif chosenDisplay == display[1]:
-                            chosenDisplay = display[0]
-
-                        # on hold
-                        # wraps around so if two or more screens pressing d will change the screens
-                        # for i,specificDisplay in enumerate(display):
-                        #     if specificDisplay == chosenDisplay:
-                        #         chosenDisplay = display[i % len(display)]
-                        #     pass
-
+        # graphical user interface is here
         Screen.fill(darkestBlue)
         message_screen('Brightness Gui', white, 20, 0.1, 0.1)
         message_screen(f"{chosenDisplay}", white, 30, 0.1, 0.4)
