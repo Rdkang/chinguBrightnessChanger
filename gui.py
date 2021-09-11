@@ -10,6 +10,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 path = pathlib.Path(__file__).parent.absolute()
+temperaturePath = "/temp/temperature.txt"
 
 WINDOW_W = 450
 WINDOW_H = 200
@@ -71,12 +72,12 @@ def getTemp():
     global temperature
 
     # creates 'temperature.txt' if doesn't exist
-    if not os.path.exists(f"{path}/temperature.txt"):
-        with open(f"{path}/temperature.txt", 'w'):
+    if not os.path.exists(temperaturePath):
+        with open(temperaturePath, 'w'):
             pass
 
     # reads temperature.txt for the temperature to use if not then puts the number '6500' in the file and uses that
-    with open(f"{path}/temperature.txt", 'r+') as file:
+    with open(temperaturePath, 'r+') as file:
         lines = file.readlines()
         # if there are no lines in the file
         if not lines:
@@ -87,9 +88,9 @@ def getTemp():
 
 def makeNextTemp(height):
     # deletes all lines in the file
-    open(f"{path}/temperature.txt", 'w').close()
+    open(temperaturePath, 'w').close()
 
-    with open(f"{path}/temperature.txt", 'r+') as file:
+    with open(temperaturePath, 'r+') as file:
         # if temperature is below 1900 will make the newTemp 6000, if true then increase the temperature and viceVersa
         if int(temperature) - 1000 <= 1900:
             newTemp = 6000
@@ -147,9 +148,9 @@ def maingameloop():
                 # resets the brightness and temperature
                 if event.key == pygame.K_r:
                     changed = subprocess.run(f"redshift -x", shell=True, capture_output=True)
-                    open(f"{path}/temperature.txt", 'w').close()
+                    open(temperaturePath, 'w').close()
 
-                    with open(f"{path}/temperature.txt", 'r+') as file:
+                    with open(temperaturePath, 'r+') as file:
                         file.write('6500')
 
         # graphical user interface is here
