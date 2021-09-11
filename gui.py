@@ -10,7 +10,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 path = pathlib.Path(__file__).parent.absolute()
-temperaturePath = "/temp/temperature.txt"
+temperaturePath = "/tmp/temperature.txt"
 
 WINDOW_W = 450
 WINDOW_H = 200
