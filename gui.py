@@ -57,14 +57,20 @@ def connectedScreens():
     if len(screens) > 1:
         # reverse the list so that hdmi is first
         screens.reverse()
+        screens.append('All')
         return screens
     else:
-        return screens[0]
+        screens.append('All')
+        return screens
 
 
 def getBrightness():
-    brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
-    # print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
+    # if 'all' will return the brightness of the first display otherwise what is chosen
+    if chosenDisplay == 'All':
+        brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{display[0]} -A5 | tail -n1", shell=True, capture_output=True)
+    else:
+        brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
+    print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
     return float(str(brightnesss.stdout).split(' ')[1][:-3])
 
 
@@ -107,7 +113,7 @@ def makeNextTemp(height):
 
 
 display = connectedScreens()
-chosenDisplay = display[0]
+chosenDisplay = display[-1:][0]
 
 
 # where it all comes together
@@ -127,13 +133,21 @@ def maingameloop():
                 if event.key == pygame.K_q:
                     exiting()
 
-                # changes the **brightness** using redshift
-                if event.key == pygame.K_j:
-                    getTemp()
-                    changed = subprocess.run(f"redshift -b {brightness-0.1} -PO {temperature}", shell=True, capture_output=True)
-                if event.key == pygame.K_k:
-                    getTemp()
-                    changed = subprocess.run(f"redshift -b {brightness+0.1} -PO {temperature}", shell=True, capture_output=True)
+                if chosenDisplay == 'All':
+                    # changes the **brightness** using redshift
+                    if event.key == pygame.K_j:
+                        getTemp()
+                        changed = subprocess.run(f"redshift -b {brightness-0.1} -PO {temperature}", shell=True, capture_output=True)
+                    if event.key == pygame.K_k:
+                        getTemp()
+                        changed = subprocess.run(f"redshift -b {brightness+0.1} -PO {temperature}", shell=True, capture_output=True)
+                else:
+                    if event.key == pygame.K_j:
+                        getTemp()
+                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --brightness {brightness - 0.1}", shell=True, capture_output=True)
+                    if event.key == pygame.K_k:
+                        getTemp()
+                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --brightness {brightness + 0.1}", shell=True, capture_output=True)
 
                 # changes the **temperature** using redshift
                 if event.key == pygame.K_h:
