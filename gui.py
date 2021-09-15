@@ -5,6 +5,8 @@ import pathlib
 import sys
 import os
 
+BACKGROUND = '#2e3440'
+REFRESH_RATE = 75
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -19,7 +21,6 @@ COUNT = 0
 temperature = 6500
 
 white = '#d8dee9'
-darkestBlue = '#2e3440'
 darkBlue = '#3b4252'
 lightBlue = '##434c5e'
 lightestBlue = '#4c566a'
@@ -57,17 +58,17 @@ def connectedScreens():
     if len(screens) > 1:
         # reverse the list so that hdmi is first
         screens.reverse()
-        screens.append('All')
+        screens.insert(0, 'All')
         return screens
     else:
-        screens.append('All')
+        screens.insert(0, 'All')
         return screens
 
 
 def getBrightness():
     # if 'all' will return the brightness of the first display otherwise what is chosen
     if chosenDisplay == 'All':
-        brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{display[0]} -A5 | tail -n1", shell=True, capture_output=True)
+        brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{display[1]} -A5 | tail -n1", shell=True, capture_output=True)
     else:
         brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
     print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
@@ -113,7 +114,7 @@ def makeNextTemp(height):
 
 
 display = connectedScreens()
-chosenDisplay = display[-1:][0]
+chosenDisplay = display[0]
 
 
 # where it all comes together
@@ -144,10 +145,10 @@ def maingameloop():
                 else:
                     if event.key == pygame.K_j:
                         getTemp()
-                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --brightness {brightness - 0.1}", shell=True, capture_output=True)
+                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness - 0.1}", shell=True, capture_output=True)
                     if event.key == pygame.K_k:
                         getTemp()
-                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --brightness {brightness + 0.1}", shell=True, capture_output=True)
+                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness + 0.1}", shell=True, capture_output=True)
 
                 # changes the **temperature** using redshift
                 if event.key == pygame.K_h:
@@ -167,8 +168,23 @@ def maingameloop():
                     with open(temperaturePath, 'r+') as file:
                         file.write('6500')
 
+                # work in progress
+                if event.key == pygame.K_d:
+                    for index, indiDisplay in enumerate(display):
+                        if chosenDisplay == indiDisplay:
+                            rightIndex = index
+
+                    if rightIndex == len(display) - 1:
+                        chosenDisplay = display[0]
+                    elif rightIndex == 0:
+                        chosenDisplay = display[1]
+                    elif rightIndex == 1:
+                        chosenDisplay = display[2]
+                    elif rightIndex == 2:
+                        chosenDisplay = display[3]
+
         # graphical user interface is here
-        Screen.fill(darkestBlue)
+        Screen.fill(BACKGROUND)
         message_screen('Brightness Gui', white, 20, 0.1, 0.1)
         message_screen(f"{chosenDisplay}", white, 30, 0.1, 0.4)
         message_screen(f"{brightness}", white, 20, 0.5, 0.42)
