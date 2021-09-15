@@ -15,10 +15,14 @@ l - increase the color temperature
 r - to reset
 q - to quit
 ```
+## Customisation
+to change the color of the background to fit your liking or theme change the variable **`BACKGROUND`** to any color in hex format
+> (in the `gui.py` file on line `21`)
 
 ## Requirments
 - linux
 - [redshift](https://wiki.archlinux.org/title/Redshift)
+
 ##### **python packages**
 - pygame 1.9.5+
 
