@@ -54,7 +54,7 @@ def connectedScreens():
     # pattern to match everything in apostrophes as the new line is also returned from the terminal command
     pattern = re.compile('\w+\-\d')
     screens = re.findall(pattern, str(screens.stdout.split()))
-    print(counter(), screens)
+    # print(counter(), screens)
     if len(screens) > 1:
         # reverse the list so that hdmi is first
         screens.reverse()
@@ -71,7 +71,7 @@ def getBrightness():
         brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{display[1]} -A5 | tail -n1", shell=True, capture_output=True)
     else:
         brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
-    print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
+    # print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
     return float(str(brightnesss.stdout).split(' ')[1][:-3])
 
 
@@ -145,10 +145,12 @@ def maingameloop():
                 else:
                     if event.key == pygame.K_j:
                         getTemp()
-                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness - 0.1}", shell=True, capture_output=True)
+                        indieChange = subprocess.run(
+                            f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness - 0.1}", shell=True, capture_output=True)
                     if event.key == pygame.K_k:
                         getTemp()
-                        indieChange = subprocess.run(f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness + 0.1}", shell=True, capture_output=True)
+                        indieChange = subprocess.run(
+                            f"xrandr --output {chosenDisplay} --mode 1920x1080 --rate {REFRESH_RATE} --brightness {brightness + 0.1}", shell=True, capture_output=True)
 
                 # changes the **temperature** using redshift
                 if event.key == pygame.K_h:
