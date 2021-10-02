@@ -1,5 +1,4 @@
-## Welcome to GitHub Pages
+# Chingu Brightness Changer
 
-You can use the [editor on GitHub](https://github.com/Rdkang/chinguBrightnessChanger/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+brightness changer written in python using pygame, with vim bindings
+ and customisable colors to suit your theme
