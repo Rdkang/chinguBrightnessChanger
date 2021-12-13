@@ -6,7 +6,7 @@ import sys
 import os
 
 BACKGROUND = '#2e3440'
-REFRESH_RATE = 75
+REFRESH_RATE = 60
 
 pygame.init()
 clock = pygame.time.Clock()
