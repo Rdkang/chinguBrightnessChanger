@@ -1,9 +1,9 @@
-import pygame
 import re
 import subprocess
 import pathlib
 import sys
 import os
+import pygame
 
 BACKGROUND = '#2e3440'
 REFRESH_RATE = 60
@@ -52,9 +52,9 @@ def connectedScreens():
     screens = subprocess.run(r"xrandr -q | grep connected | awk '/ connected/ {print $1}'", shell=True, capture_output=True)
 
     # pattern to match everything in apostrophes as the new line is also returned from the terminal command
-    pattern = re.compile('\w+\-\d')
+    pattern = re.compile("'([^']*)'")
+
     screens = re.findall(pattern, str(screens.stdout.split()))
-    # print(counter(), screens)
     if len(screens) > 1:
         # reverse the list so that hdmi is first
         screens.reverse()
@@ -189,7 +189,7 @@ def maingameloop():
         Screen.fill(BACKGROUND)
         message_screen('Brightness Gui', white, 20, 0.1, 0.1)
         message_screen(f"{chosenDisplay}", white, 30, 0.1, 0.4)
-        message_screen(f"{brightness}", white, 20, 0.5, 0.42)
+        message_screen(f"{brightness}", white, 20, 0.6, 0.42)
 
         pygame.display.update()
         clock.tick(FPS)
