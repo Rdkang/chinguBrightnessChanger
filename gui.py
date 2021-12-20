@@ -53,6 +53,7 @@ def connectedScreens():
 
     # pattern to match everything in apostrophes as the new line is also returned from the terminal command
     pattern = re.compile("'([^']*)'")
+    print(screens)
 
     screens = re.findall(pattern, str(screens.stdout.split()))
     if len(screens) > 1:
