@@ -5,8 +5,11 @@ import sys
 import os
 import pygame
 
-BACKGROUND = '#2e3440'
+BACKGROUND = '#282a36'
+FONT = 'JetBrainsMono Nerd Font'
 REFRESH_RATE = 60
+WINDOW_W = 450
+WINDOW_H = 200
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -14,16 +17,11 @@ clock = pygame.time.Clock()
 path = pathlib.Path(__file__).parent.absolute()
 temperaturePath = "/tmp/temperature.txt"
 
-WINDOW_W = 450
-WINDOW_H = 200
-FPS = 75
-COUNT = 0
+FPS = 60
 temperature = 6500
+COUNT = 0
 
-white = '#d8dee9'
-darkBlue = '#3b4252'
-lightBlue = '##434c5e'
-lightestBlue = '#4c566a'
+white = '#f8f8f2'
 
 Screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
 pygame.display.set_caption('Brightness Gui')
@@ -36,7 +34,7 @@ def counter():
 
 
 def message_screen(message, colour, font_size, x_pos, y_pos):
-    font = pygame.font.SysFont('DejaVu Sans', font_size)
+    font = pygame.font.SysFont(FONT, font_size)
     screen_text = font.render(message, True, colour)
     Screen.blit(screen_text, [int(WINDOW_W * x_pos), int(WINDOW_H * y_pos)])
 
@@ -53,7 +51,6 @@ def connectedScreens():
 
     # pattern to match everything in apostrophes as the new line is also returned from the terminal command
     pattern = re.compile("'([^']*)'")
-    print(screens)
 
     screens = re.findall(pattern, str(screens.stdout.split()))
     if len(screens) > 1:
@@ -72,7 +69,6 @@ def getBrightness():
         brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{display[1]} -A5 | tail -n1", shell=True, capture_output=True)
     else:
         brightnesss = subprocess.run(f"xrandr --verbose --current | grep ^{chosenDisplay} -A5 | tail -n1", shell=True, capture_output=True)
-    # print(float(str(brightnesss.stdout).split(' ')[1][:-3]), counter())
     return float(str(brightnesss.stdout).split(' ')[1][:-3])
 
 
