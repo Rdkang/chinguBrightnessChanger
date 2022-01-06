@@ -4,6 +4,7 @@ import pathlib
 import sys
 import os
 import pygame
+from pygame import font
 
 BACKGROUND = '#282a36'
 FONT = 'JetBrainsMono Nerd Font'
@@ -33,7 +34,7 @@ def counter():
     return COUNT
 
 
-def message_screen(message, colour, font_size, x_pos, y_pos):
+def message_screen(message: str, colour: str, font_size: int, x_pos: int, y_pos: int):
     font = pygame.font.SysFont(FONT, font_size)
     screen_text = font.render(message, True, colour)
     Screen.blit(screen_text, [int(WINDOW_W * x_pos), int(WINDOW_H * y_pos)])
