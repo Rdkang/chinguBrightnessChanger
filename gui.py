@@ -21,6 +21,7 @@ temperaturePath = "/tmp/temperature.txt"
 FPS = 60
 temperature = 6500
 COUNT = 0
+user = os.getlogin()
 
 white = '#f8f8f2'
 
@@ -182,6 +183,8 @@ def maingameloop():
                         chosenDisplay = display[2]
                     elif rightIndex == 2:
                         chosenDisplay = display[3]
+                if event.key == pygame.K_a:
+                    os.system(f"/home/{user}/.local/bin/sss/autoRedshift.py")
 
         # graphical user interface is here
         Screen.fill(BACKGROUND)
